@@ -6,7 +6,7 @@ CatalystX::Example::IOC::Blog - Demo app for Bread::Board
 
 This is an example Catalyst application to demonstrate the usage of
 Bread::Board. It requires getting Catalyst from the repository, using the
-gsoc_breadboard branch.
+gsoc_breadboard (or gsoc_breadboard_split_get_all_components) branch.
 
 Here's how it's gonna work:
 
