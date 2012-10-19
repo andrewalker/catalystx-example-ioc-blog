@@ -1,13 +1,20 @@
 package CatalystX::Example::IOC::Blog::View::Render;
+use Moose;
+use namespace::autoclean;
 
-use strict;
-use warnings;
+extends 'Catalyst::View::Xslate';
 
-use base 'Catalyst::View::Xslate';
-
-__PACKAGE__->config(
-    template_extension => '.tx',
+has theme => (
+    is => 'ro',
+    isa => 'Str',
 );
+
+around path => sub {
+    my $orig = shift;
+    my $self = shift;
+
+    return $self->$orig(@_) . '/' . $self->theme;
+};
 
 1;
 
@@ -18,6 +25,3 @@ CatalystX::Example::IOC::Blog::View::Render - Xslate View for CatalystX::Example
 =head1 DESCRIPTION
 
 Xslate View for CatalystX::Example::IOC::Blog.
-
-=cut
-
