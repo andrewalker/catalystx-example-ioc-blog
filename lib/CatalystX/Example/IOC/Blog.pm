@@ -2,23 +2,13 @@ package CatalystX::Example::IOC::Blog;
 use Moose;
 use namespace::autoclean;
 
-use Catalyst::Runtime 5.80;
+use Catalyst::Runtime 5.90;
 
 # Set flags and add plugins for the application.
-#
-# Note that ORDERING IS IMPORTANT here as plugins are initialized in order,
-# therefore you almost certainly want to keep ConfigLoader at the head of the
-# list if you're using it.
-#
-#         -Debug: activates the debug mode for very useful log messages
-#   ConfigLoader: will load the configuration from a Config::General file in the
-#                 application's home directory
 # Static::Simple: will serve static files from the application's root
 #                 directory
 
 use Catalyst qw/
-    -Debug
-    ConfigLoader
     Static::Simple
 /;
 
@@ -45,6 +35,15 @@ __PACKAGE__->config(
 # Start the application
 __PACKAGE__->setup();
 
+if (!__PACKAGE__->can('container')) {
+    die "You need to use Catalyst from the gsoc_breadboard branch";
+}
+
+1;
+
+__END__
+
+=encoding utf8
 
 =head1 NAME
 
@@ -56,7 +55,7 @@ CatalystX::Example::IOC::Blog - Catalyst based application
 
 =head1 DESCRIPTION
 
-[enter your description here]
+See README.pod
 
 =head1 SEE ALSO
 
@@ -70,7 +69,3 @@ André Walker
 
 This library is free software. You can redistribute it and/or modify
 it under the same terms as Perl itself.
-
-=cut
-
-1;
