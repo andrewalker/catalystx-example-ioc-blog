@@ -64,6 +64,20 @@ Generate static page, using the theme files and the post / page itself.
 
 It's default, it won't be included in the Container.
 
+=head3 View LoadFile
+
+=over 4
+
+=item Lifecycle: Normal
+
+=item Depends on: Nothing
+
+=item Type: Block
+
+=back
+
+Get the post file.
+
 =head3 View Static
 
 =over 4
