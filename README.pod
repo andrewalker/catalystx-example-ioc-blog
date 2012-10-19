@@ -1,0 +1,130 @@
+=head1 NAME
+
+CatalystX::Example::IOC::Blog - Demo app for Bread::Board
+
+=head1 DESCRIPTION
+
+This is an example Catalyst application to demonstrate the usage of
+Bread::Board. It requires getting Catalyst from the repository, using the
+gsoc_breadboard branch.
+
+Here's how it's gonna work:
+
+=over 4
+
+=item * The posts are made in the filesystem
+
+=item * It will use only one templating system (Kolon)
+
+=item * No comments or authentication will be implemented
+
+=item * There will only be categories (no tags for now)
+
+=item * There will be posts and pages
+
+=item * There will be themes
+
+=back
+
+The goal is to demonstrate Bread::Board. New features to demonstrate include:
+
+=over 4
+
+=item * 'Block' components
+
+=item * Non-Catalyst classes as components
+
+=item * Different lifecycles for each components
+
+=item * Interdependent components
+
+=item * Components usable outside Catalyst (scripts)
+
+=item * Customize container
+
+=back
+
+=head2 Components
+
+The models and views we could have for this application are:
+
+=head3 View Render
+
+=over 4
+
+=item Lifecycle: Singleton
+
+=item Depends on: Nothing
+
+=item Type: Default
+
+=back
+
+Generate static page, using the theme files and the post / page itself.
+
+It's default, it won't be included in the Container.
+
+=head3 View Static
+
+=over 4
+
+=item Lifecycle: Singleton
+
+=item Depends on: Nothing
+
+=item Type: Default
+
+=back
+
+Get static page, previously saved.
+
+=head3 Model RenderToStatic
+
+=over 4
+
+=item Lifecycle: Normal
+
+=item Depends on: View Render
+
+=item Type: Block
+
+=back
+
+Renders using the view Render, and saves the result as a static (compiled) HTML
+file.
+
+=head3 Model Metadata
+
+=over 4
+
+=item Lifecycle: Normal
+
+=item Depends on: Nothing
+
+=item Type: Class
+
+=back
+
+This model will list categories, list all posts in a category and list all
+posts in all categories. It will also save metadata about the site if
+necessary.
+
+=head3 Model Build
+
+=over 4
+
+=item Lifecycle: Normal
+
+=item Depends on: model Metadata, model Static
+
+=item Type: Class
+
+=back
+
+This model will [re]build the entire site.
+
+=head2 Usage outside Catalyst
+
+We will install a version of this app connected to a git repository with the
+posts. We will then write a hook for git in shell script, calling the
+application and building the entire website using a method in the Posts model.
