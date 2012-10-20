@@ -60,11 +60,12 @@ The models and views we could have for this application are:
 
 =back
 
-Generate static page, using the theme files and the post / page itself.
+Generate static page, using the theme files and the post / page itself. (It's
+what regular template views do.)
 
 It's default, it won't be included in the Container.
 
-=head3 View LoadFile
+=head3 View Slurper
 
 =over 4
 
