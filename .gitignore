@@ -1,0 +1,25 @@
+# backup files (if any)
+*~
+*.bak
+
+# hidden files
+.*
+
+# except this file and gitmodules
+!.gitignore
+!.gitmodules
+
+# tmp files (session, cache)
+tmp/
+# keep the directory though
+!tmp/.keep
+
+# ctags-exuberant tags file can be manually generated so it doesn't need to be
+# in the vcs
+tags
+
+# Devel::Cover directory
+cover_db/
+
+# local config
+catalystx_example_ioc_blog_*.conf
