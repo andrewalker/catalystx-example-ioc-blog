@@ -10,6 +10,16 @@ extends 'Catalyst::IOC::Container';
 sub BUILD {
     my $self = shift;
 
+    $self->get_sub_container('view')->add_service(
+        Catalyst::IOC::ConstructorInjection->new(
+            name                    => 'Static',
+            lifecycle               => 'Singleton',
+            class                   => 'CatalystX::Example::IOC::Blog::View::Static',
+            catalyst_component_name => 'CatalystX::Example::IOC::Blog::View::Static',
+            dependencies            => [ depends_on( '/catalyst_application' ), depends_on( '/path_to_static' ) ],
+        )
+    );
+
     $self->add_service(
         Bread::Board::BlockInjection->new(
             name => 'path_to_posts',
@@ -127,12 +137,13 @@ sub BUILD {
                 catalyst_application => depends_on( '/catalyst_application' ),
                 render               => depends_on( '/view/Render' ),
                 slurp                => depends_on( '/view/Slurper' ),
+                path_to_posts        => depends_on( '/path_to_posts' ),
             },
             parameters              => { filename => { isa => 'Str' } },
             block                   => sub {
                 my $s        = shift;
                 my $slurp    = $s->param('slurp');
-                my $filename = $s->param('filename');
+                my $filename = $s->param('path_to_posts') . '/' . $s->param('filename');
 
                 my $str      = $slurp->inflate( filename => $filename );
                 my $content  = $s->param('render')->render( \$str, {} );
@@ -158,21 +169,6 @@ sub BUILD {
             },
         )
     );
-
-#   $self->get_sub_container('model')->add_service(
-#       Catalyst::IOC::ConstructorInjection->new(
-#           name             => 'DependsOnDefaultSetup',
-#           class            => 'TestAppCustomContainer::Model::DependsOnDefaultSetup',
-#           catalyst_component_name => 'TestAppCustomContainer::Model::DependsOnDefaultSetup',
-#           dependencies     => {
-#               catalyst_application => depends_on( '/catalyst_application' ),
-#               # FIXME - this is what is blowing up everything:
-#               # DefaultSetup needs the context. It's not getting it here!
-#               # foo => depends_on('/model/DefaultSetup'),
-#               foo => depends_on('/component/model_DefaultSetup'),
-#           },
-#       )
-#   );
 }
 
 __PACKAGE__->meta->make_immutable;

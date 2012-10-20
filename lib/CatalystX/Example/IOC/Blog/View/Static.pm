@@ -4,7 +4,7 @@ use namespace::autoclean;
 
 extends 'Catalyst::View';
 
-has path_to_static_site => (
+has path_to_static => (
     is => 'ro',
     isa => 'Str',
 );
@@ -12,26 +12,30 @@ has path_to_static_site => (
 sub exists {
     my ($self, $file) = @_
 
-    # check if file exists
+    return -e $self->path_to_static . '/' . $file;
 }
 
 sub render {
     my ($self, $file) = @_;
 
-    # load file
+    local $/;
+
+    open my $fh, '<', $self->path_to_static . '/' . $file;
+    my $content = <$fh>;
+    close $fh;
 }
 
 sub process {
-    my ($self, $c) = @_;
+    my ( $self, $c ) = @_;
 
-    my $stash = $c->stash;
+    my $stash    = $c->stash;
     my $template = $stash->{template};
 
     my $output = $self->render($template);
 
     my $res = $c->response;
-    if (! $res->content_type) {
-        $res->content_type('text/html; charset=' . $self->content_charset);
+    if ( !$res->content_type ) {
+        $res->content_type('text/html; charset=utf-8');
     }
 
     $res->body( $output );
