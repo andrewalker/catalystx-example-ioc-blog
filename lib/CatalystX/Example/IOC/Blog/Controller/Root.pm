@@ -11,22 +11,23 @@ __PACKAGE__->config(namespace => '');
 sub index :Path :Args(0) {
     my ( $self, $ctx ) = @_;
 
-    $self->_render_page($ctx, 'index.tx');
+    $self->_render_page($ctx, 'index');
 }
 
 sub default :Path {
     my ( $self, $ctx ) = @_;
 
     # the filename of the post or the page is the path
-    # concatenated with the suffix: .tx
-    my $filename = $ctx->req->path . '.tx';
-    # it really shouldn't be hardcoded, but we'll leave it for a next version
+    my $filename = $ctx->req->path;
 
     $self->_render_page($ctx, $filename);
 }
 
 sub _render_page {
     my ( $self, $ctx, $filename ) = @_;
+
+    $ctx->stash->{template} = $filename;
+
     # first we check wether the static file already exists
     # if it does, just show it
     if ( $ctx->view('Static')->exists( $filename ) ) {
@@ -49,8 +50,6 @@ sub _render_page {
     $ctx->response->body( 'Page not found' );
     $ctx->response->status(404);
 }
-
-sub end : ActionClass('RenderView') {}
 
 __PACKAGE__->meta->make_immutable;
 
