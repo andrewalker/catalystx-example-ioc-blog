@@ -4,6 +4,7 @@ use namespace::autoclean;
 use Catalyst::IOC;
 use CatalystX::IOC::CustomBlockInjection;
 use Bread::Board::BlockInjection;
+use autodie;
 
 extends 'Catalyst::IOC::Container';
 
@@ -85,10 +86,10 @@ sub BUILD {
                 my $path = $s->param('path');
 
                 opendir(my $dir, $path);
-                my @files = <$dir>;
+                my @files = readdir $dir;
                 closedir($dir);
 
-                return [ grep { $_ !~ m[^\.{1,2}$] } @files ];
+                return [ map { s/\.tx$//; $_ } grep { $_ !~ m[^\.{1,2}$] } @files ];
             },
         )
     );
@@ -116,11 +117,13 @@ sub BUILD {
             parameters              => { filename => { isa => 'Str' } },
             block                   => sub {
                 my $s = shift;
-                my $filename = $s->param('path_to_posts') . '/' . $s->param('filename');
+
+                # the .tx really shouldn't be hardcoded, but we'll leave it for a next version
+                my $filename = $s->param('path_to_posts') . '/' . $s->param('filename') . '.tx';
 
                 local $/;
 
-                open my $fh, '<', $filename;
+                open(my $fh, '<', $filename);
                 my $content = <$fh>;
                 close $fh;
 
@@ -137,20 +140,27 @@ sub BUILD {
                 catalyst_application => depends_on( '/catalyst_application' ),
                 render               => depends_on( '/view/Render' ),
                 slurp                => depends_on( '/view/Slurper' ),
-                path_to_posts        => depends_on( '/path_to_posts' ),
+                path                 => depends_on( '/path_to_static' ),
             },
             parameters              => { filename => { isa => 'Str' } },
             block                   => sub {
                 my $s        = shift;
                 my $slurp    = $s->param('slurp');
-                my $filename = $s->param('path_to_posts') . '/' . $s->param('filename');
+                my $filename = $s->param('filename');
+                my $static_path = $s->param('path') . '/' . $filename;
 
-                my $str      = $slurp->inflate( filename => $filename );
-                my $content  = $s->param('render')->render( \$str, {} );
+                my $str      = $slurp->inflate( filename => $filename  );
+                my $content  = $s->param('render')->render( undef, \$str, {} );
 
-                open my $fh, '>', $filename;
+                if (!$str || !$content) {
+                    return 0;
+                }
+
+                open(my $fh, '>', $static_path);
                 print $fh $content;
-                close $fh;
+                close($fh);
+
+                return -e $static_path;
             },
         )
     );
