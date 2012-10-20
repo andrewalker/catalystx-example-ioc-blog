@@ -1,0 +1,5 @@
+<:
+    if ($categories) {
+        $save_metadata({ categories => $categories });
+    }
+:>

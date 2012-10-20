@@ -1,0 +1,17 @@
+<:
+    cascade page {
+        title => "List categories"
+    }
+
+    block content -> {
+:>
+
+<ul>
+
+:        for $categories -> $cat {
+            <li><: $cat :></li>
+:        }
+
+</ul>
+
+:   }
