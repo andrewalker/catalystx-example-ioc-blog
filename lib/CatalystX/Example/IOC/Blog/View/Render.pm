@@ -13,8 +13,26 @@ around path => sub {
     my $orig = shift;
     my $self = shift;
 
-    return $self->$orig(@_) . '/' . $self->theme;
+    my $paths = $self->$orig(@_);
+
+    return [ map { $_ . '/' . $self->theme } @$paths ];
 };
+
+sub save_metadata {
+    my ($self, $ctx, $metadata) = @_;
+    my $model = $ctx->stash->{current_model_instance};
+
+    if ($model && ref $model eq 'CatalystX::Example::IOC::Blog::Model::Metadata') {
+        $model->current_metadata($metadata);
+    }
+}
+
+has '+expose_methods' => (
+    default => sub {
+        [ 'save_metadata' ];
+    },
+);
+
 
 1;
 

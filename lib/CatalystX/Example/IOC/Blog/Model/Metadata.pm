@@ -1,7 +1,8 @@
 package CatalystX::Example::IOC::Blog::Model::Metadata;
 use Moose;
 use namespace::autoclean;
-use Text::Xslate;
+#use Text::Xslate;
+use Text::Xslate::Parser;
 use Carp qw/croak/;
 use Storable qw/store retrieve/;
 
@@ -23,6 +24,12 @@ has metadata => (
     builder => '_build_metadata',
 );
 
+has current_metadata => (
+    is => 'rw',
+    isa => 'HashRef',
+    default => sub { {} },
+);
+
 has view_render => ( is => 'ro' );
 
 has slurper => ( is => 'ro' );
@@ -33,9 +40,9 @@ sub _get_metadata_from_file {
     # we don't depend on it because it has a parameter
     my $content = $self->slurper->inflate( filename => $file );
 
-    # XXX: not thread safe
-    $self->view_render->render($content);
-    my $vars = Text::Xslate->current_vars;
+    # TODO: think this through
+    #$self->view_render->render(undef, \$content, {});
+    #my $vars = $self->current_metadata;
 
     return {
         categories => $vars->{categories}
