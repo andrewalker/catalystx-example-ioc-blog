@@ -1,6 +1,7 @@
 package CatalystX::Example::IOC::Blog::View::Static;
 use Moose;
 use namespace::autoclean;
+use autodie;
 
 extends 'Catalyst::View';
 
@@ -10,7 +11,7 @@ has path_to_static => (
 );
 
 sub exists {
-    my ($self, $file) = @_
+    my ($self, $file) = @_;
 
     return -e $self->path_to_static . '/' . $file;
 }
@@ -23,6 +24,8 @@ sub render {
     open my $fh, '<', $self->path_to_static . '/' . $file;
     my $content = <$fh>;
     close $fh;
+
+    return $content;
 }
 
 sub process {
