@@ -45,7 +45,7 @@ sub _get_metadata_from_file {
     #my $vars = $self->current_metadata;
 
     return {
-        categories => $vars->{categories}
+        categories => {} # $vars->{categories}
     };
 }
 
